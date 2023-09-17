@@ -1,15 +1,18 @@
 ﻿namespace FizzBuzz.Configurable
 {
-    public sealed class StackAllocFizzBuzzer
+    public sealed class CommunityToolkitStringPoolFizzBuzzer
     {
         private readonly ModuloOption[] _options;
         private readonly int _capacity;
 
-        public StackAllocFizzBuzzer(params ModuloOption[] options)
+        private readonly CommunityToolkit.HighPerformance.Buffers.StringPool _pool = new CommunityToolkit.HighPerformance.Buffers.StringPool();
+
+        public CommunityToolkitStringPoolFizzBuzzer(params ModuloOption[] options)
         {
             _options = options.OrderBy(op => op.Divider).ToArray();
             _capacity = _options.Sum(op => op.Text.Length);
 
+            // stack has limitations, so lets assume we do not have more than 100 characters max
             if (_capacity > 100) throw new InvalidOperationException("too big");
         }
 
@@ -34,7 +37,7 @@
             }
 
             return length > 0
-                ? new string(buffer[..length])
+                ? _pool.GetOrAdd(buffer[..length])
                 : value.ToString();
 
         }

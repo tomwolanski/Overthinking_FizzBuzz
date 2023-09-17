@@ -4,7 +4,8 @@ using FizzBuzz.Configurable;
 namespace FizzBuzz
 {
     [MemoryDiagnoser]
-    public class BenchmarkCollection
+    [BenchmarkCategory("configurable")]
+    public class Configurables_BenchmarkCollection
     {
         [Params(100)]
         public int N { get; set; }

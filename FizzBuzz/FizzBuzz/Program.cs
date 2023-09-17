@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Transactions;
 using BenchmarkDotNet.Running;
 using FizzBuzz.SIMD;
@@ -9,13 +10,13 @@ namespace FizzBuzz
     {
         static void Main(string[] args)
         {
-            //using var ff = new ILGPUFizzBuzzer();
 
-            //var arr = Enumerable.Range(1, 10_000).ToArray();
 
-            //var fff = ff.Execute(arr);
+            BenchmarkSwitcher.FromAssembly(Assembly.GetExecutingAssembly()).Run(args);
 
-            BenchmarkRunner.Run<BenchmarkCollection>();
+            //BenchmarkRunner.Run<BenchmarkCollection>();
+
+            //BenchmarkRunner.Run<SIMD.BenchmarkCollection>();
         }
     }
 

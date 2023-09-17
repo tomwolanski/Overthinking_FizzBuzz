@@ -1,4 +1,5 @@
 ﻿using ILGPU;
+using ILGPU.IR;
 using ILGPU.Runtime;
 
 namespace FizzBuzz.SIMD

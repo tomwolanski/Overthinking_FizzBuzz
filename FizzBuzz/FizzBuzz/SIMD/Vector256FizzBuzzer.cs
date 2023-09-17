@@ -7,6 +7,12 @@ namespace FizzBuzz.SIMD
 {
     public sealed class Vector256FizzBuzzer
     {
+        // Depending on CPY this will vary. Should contain 8 integers on 64bit OS
+        static readonly int VectorSize = Vector256<int>.Count;
+
+        // a sequence of [ 0, 1, 2, 3, 4, 5, 6, 7 ] used to generate next vectors
+        static readonly Vector256<int> Sequence = Vector256.Create(Enumerable.Range(0, VectorSize).ToArray());
+
         public Vector256FizzBuzzer()
         {
             if (!Vector256.IsHardwareAccelerated)
@@ -15,44 +21,39 @@ namespace FizzBuzz.SIMD
             }
         }
 
-        public FizzBuzzResultEnum[] Execute(int[] input)
+        public FizzBuzzResultEnum[] Execute(int n)
         {
-            var output = new FizzBuzzResultEnum[input.Length];
-
-            // Depending on CPY this will vary. Should contain 8 integers on 64bit OS
-            var vectorSize = Vector256<int>.Count;
-
+            var output = new FizzBuzzResultEnum[n];
+            
             int i;
 
             // Iterate over vectors that contain vectorSize of integers. Perform CalculateFizBuzz on each of them;
-            for (i = 0; i < input.Length - vectorSize; i += vectorSize)
+            for (i = 0; i < n - VectorSize; i += VectorSize)
             {
-                var inSpan = input.AsSpan().Slice(i, vectorSize);
-                var outSpan = output.AsSpan().Slice(i, vectorSize);
+                var outSpan = output.AsSpan().Slice(i, VectorSize);
 
-                CalculateFizBuzz(inSpan, outSpan);
+                CalculateFizBuzz(i, outSpan);
             }
 
-            // If any value was left, perform manual failback
-            for (; i < input.Length; i++)
+            // If any value was left, perform a failback
+            for (; i < n; i++)
             {
-                var val = input[i];
-                output[i] = (val % 3, val % 5) switch
+                output[i] = (i % 3, i % 5) switch
                 {
                     (0, 0) => FizzBuzzResultEnum.FizzBuzz,
                     (0, _) => FizzBuzzResultEnum.Fizz,
                     (_, 0) => FizzBuzzResultEnum.Buzz,
-                    _ => (FizzBuzzResultEnum)val
+                    _ => (FizzBuzzResultEnum)i
                 };
             }
 
             return output;
         }
 
-
-        static void CalculateFizBuzz(ReadOnlySpan<int> input, Span<FizzBuzzResultEnum> output)
+        static void CalculateFizBuzz(int index, Span<FizzBuzzResultEnum> output)
         {
-            var inVect = Vector256.Create(input);
+            // Generate next vector by 
+            var input = Vector256.Create(index) + Sequence;
 
             // Calculate new vectors, multiply them by our enum value
             // Fizz calculation:
@@ -61,8 +62,8 @@ namespace FizzBuzz.SIMD
             // Bazz calculation:
             // input:  [1, 2, 3, 4, 5, 6], divider: 5, FizzBuzzEnum.Bazz: -2
             // result: [0, 0, 0, 0,-2, 0]
-            Vector256<int> fizzValues = Math.Abs((int)FizzBuzzResultEnum.Fizz) * CalcIsDivisible(inVect, 3);
-            Vector256<int> buzzValues = Math.Abs((int)FizzBuzzResultEnum.Buzz) * CalcIsDivisible(inVect, 5);
+            Vector256<int> fizzValues = Math.Abs((int)FizzBuzzResultEnum.Fizz) * CalcIsDivisible(input, 3);
+            Vector256<int> buzzValues = Math.Abs((int)FizzBuzzResultEnum.Buzz) * CalcIsDivisible(input, 5);
 
             // Our enum is designed in such a way that Fizz + Bazz = FizzBazz
             // To calculate results, we can just add moth vectors
@@ -76,7 +77,7 @@ namespace FizzBuzz.SIMD
             // If 0 select original, value, otherwise select value from fizzBuzzValues
             var result = Vector256.ConditionalSelect(
                 Vector256.Equals(fizzBuzzValues, Vector256<int>.Zero),
-                inVect,
+                input,
                 fizzBuzzValues);
 
             // Transform vector to Span<FizzBuzzEnum> and copy to output

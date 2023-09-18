@@ -2,7 +2,6 @@
 
 namespace FizzBuzz.SIMD
 {
-    [MemoryDiagnoser]
     [BenchmarkCategory("simd")]
     public class SIMD_BenchmarkCollection
     {
@@ -33,8 +32,4 @@ namespace FizzBuzz.SIMD
             return _gpu.Execute(N);
         }
     }
-
-
-
-
 }

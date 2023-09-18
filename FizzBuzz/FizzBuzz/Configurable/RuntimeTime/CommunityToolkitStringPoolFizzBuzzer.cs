@@ -5,7 +5,7 @@
         private readonly ModuloOption[] _options;
         private readonly int _capacity;
 
-        private readonly CommunityToolkit.HighPerformance.Buffers.StringPool _pool = new CommunityToolkit.HighPerformance.Buffers.StringPool();
+        private static readonly CommunityToolkit.HighPerformance.Buffers.StringPool _pool = new CommunityToolkit.HighPerformance.Buffers.StringPool();
 
         public CommunityToolkitStringPoolFizzBuzzer(params ModuloOption[] options)
         {

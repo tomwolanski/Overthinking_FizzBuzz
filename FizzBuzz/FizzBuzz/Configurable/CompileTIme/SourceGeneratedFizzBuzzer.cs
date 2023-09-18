@@ -6,6 +6,7 @@ namespace FizzBuzz.Configurable
     {
         [FizzBuzzGenerator.ModuloOption(3, "Fizz")]
         [FizzBuzzGenerator.ModuloOption(5, "Buzz")]
+        [FizzBuzzGenerator.ModuloOption(7, "Fazz")]
         public partial string Execute(int value);
     }
 }

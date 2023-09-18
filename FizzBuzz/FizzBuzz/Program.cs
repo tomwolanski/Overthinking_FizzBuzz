@@ -1,28 +1,13 @@
-﻿using System;
-using System.Reflection;
-using System.Transactions;
+﻿using System.Reflection;
 using BenchmarkDotNet.Running;
-using FizzBuzz.SIMD;
 
 namespace FizzBuzz
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-
-
             BenchmarkSwitcher.FromAssembly(Assembly.GetExecutingAssembly()).Run(args);
-
-            //BenchmarkRunner.Run<BenchmarkCollection>();
-
-            //BenchmarkRunner.Run<SIMD.BenchmarkCollection>();
         }
     }
-
-
-
-
-
-    
 }

@@ -11,7 +11,7 @@
 
         public string Execute(int value)
         {
-            var s = string.Empty;
+            var returnString = string.Empty;
 
             for (int i = 0; i < _options.Length; i++)
             {
@@ -19,12 +19,12 @@
                 var modulo = value % option.Divider;
                 if (modulo == 0)
                 {
-                    s += option.Text;
+                    returnString += option.Text;
                 }
             }
 
-            var result = s.Length != 0
-                ? s
+            var result = returnString.Length != 0
+                ? returnString
                 : value.ToString();
 
             return result;

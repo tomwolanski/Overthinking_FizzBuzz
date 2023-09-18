@@ -23,16 +23,17 @@ namespace FizzBuzz.SIMD
             
         }
 
-        public FizzBuzzResultEnum[] Execute(int n)
+        public FizzBuzzResultEnum[] Execute(int count)
         {
-            var deviceOutput = _accelerator.Allocate1D<FizzBuzzResultEnum>(n);
-
-            _kernel(n, deviceOutput.View);
+            using var deviceOutput = _accelerator.Allocate1D<FizzBuzzResultEnum>(count);
+            
+            _kernel(count, deviceOutput.View);
 
             _accelerator.Synchronize();
             return deviceOutput.GetAsArray1D();
         }
 
+        // Kernel method will be translated into GPU code and executed in parallel
         static void Kernel(Index1D i, ArrayView<FizzBuzzResultEnum> output)
         {
             var value = (int)i;

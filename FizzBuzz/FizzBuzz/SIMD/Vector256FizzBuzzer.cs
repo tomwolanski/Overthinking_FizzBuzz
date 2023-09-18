@@ -11,7 +11,7 @@ namespace FizzBuzz.SIMD
         static readonly int VectorSize = Vector256<int>.Count;
 
         // a sequence of [ 0, 1, 2, 3, 4, 5, 6, 7 ] used to generate next vectors
-        static readonly Vector256<int> Sequence = Vector256.Create(Enumerable.Range(0, VectorSize).ToArray());
+        static readonly Vector256<int> RaisingSequence = Vector256.Create(Enumerable.Range(0, VectorSize).ToArray());
 
         public Vector256FizzBuzzer()
         {
@@ -21,14 +21,14 @@ namespace FizzBuzz.SIMD
             }
         }
 
-        public FizzBuzzResultEnum[] Execute(int n)
+        public FizzBuzzResultEnum[] Execute(int count)
         {
-            var output = new FizzBuzzResultEnum[n];
+            var output = new FizzBuzzResultEnum[count];
             
             int i;
 
             // Iterate over vectors that contain vectorSize of integers. Perform CalculateFizBuzz on each of them;
-            for (i = 0; i < n - VectorSize; i += VectorSize)
+            for (i = 0; i < count - VectorSize; i += VectorSize)
             {
                 var outSpan = output.AsSpan().Slice(i, VectorSize);
 
@@ -36,7 +36,7 @@ namespace FizzBuzz.SIMD
             }
 
             // If any value was left, perform a failback
-            for (; i < n; i++)
+            for (; i < count; i++)
             {
                 output[i] = (i % 3, i % 5) switch
                 {
@@ -52,8 +52,9 @@ namespace FizzBuzz.SIMD
 
         static void CalculateFizBuzz(int index, Span<FizzBuzzResultEnum> output)
         {
-            // Generate next vector by 
-            var input = Vector256.Create(index) + Sequence;
+            // Generate next vector by starting with vector filled with index value
+            // Then add [0, 1, 2 ... 7] to get vector with raising sequence
+            var input = Vector256.Create(index) + RaisingSequence;
 
             // Calculate new vectors, multiply them by our enum value
             // Fizz calculation:

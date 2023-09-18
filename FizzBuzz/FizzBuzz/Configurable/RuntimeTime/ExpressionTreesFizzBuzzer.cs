@@ -48,7 +48,7 @@ namespace FizzBuzz.Configurable
                 var nextIndex = currentIndex + 1;
 
                 return Expression.IfThenElse(
-                    GetIsDivisibleBy(parameterExpr, divider),
+                    GetIsDivisibleByExpression(parameterExpr, divider),
                     GenerateOptionsMatchingExpression(options, parameterExpr, returnTarget, nextIndex, returnString + text),
                     GenerateOptionsMatchingExpression(options, parameterExpr, returnTarget, nextIndex, returnString));
             }
@@ -69,7 +69,7 @@ namespace FizzBuzz.Configurable
         }
 
         // returns an expression of "value % divider == 0"
-        private static Expression GetIsDivisibleBy(Expression parameterExpr, int divider)
+        private static Expression GetIsDivisibleByExpression(Expression parameterExpr, int divider)
         {
             return  Expression.Equal(
                         Expression.Modulo(

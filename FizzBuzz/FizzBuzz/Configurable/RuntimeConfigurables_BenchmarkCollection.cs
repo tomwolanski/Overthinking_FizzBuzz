@@ -1,13 +1,13 @@
 ﻿using BenchmarkDotNet.Attributes;
-using FizzBuzz.Configurable;
 
-namespace FizzBuzz
+namespace FizzBuzz.Configurable
 {
     [MemoryDiagnoser]
     [BenchmarkCategory("configurable")]
-    public class Configurables_BenchmarkCollection
+    [HtmlExporter, RPlotExporter, MarkdownExporter]
+    public class RuntimeConfigurables_BenchmarkCollection
     {
-        [Params(100)]
+        [Params(100, 10_000, 10_000_000)]
         public int N { get; set; }
 
         private int[] _values = Array.Empty<int>();
@@ -19,7 +19,7 @@ namespace FizzBuzz
         {
             yield return new ModuloOption[] { new(3, "Fizz"), new(5, "Buzz") };
             yield return new ModuloOption[] { new(3, "Fizz"), new(5, "Buzz"), new(7, "Fazz") };
-            //yield return new ModuloOption[] { new(3, "Fizz"), new(5, "Buzz"), new(7, "Fazz"), new(11, "Yazz"), new(13, "Zazz") };
+            yield return new ModuloOption[] { new(3, "Fizz"), new(5, "Buzz"), new(7, "Fazz"), new(11, "Yazz"), new(13, "Zazz") };
         }
 
 
@@ -29,8 +29,7 @@ namespace FizzBuzz
         private StackAllocFizzBuzzer _stackAllockImpl;
         private ExpressionTreesFizzBuzzer _expressionTreeImpl;
         private CommunityToolkitStringPoolFizzBuzzer _comuunityToolkitStringPoolImpl;
-
-
+        
         [GlobalSetup]
         public void Setup()
         {
@@ -69,10 +68,18 @@ namespace FizzBuzz
         }
 
         [Benchmark()]
+        public int StackAllocWithToolkitStringPool()
+        {
+            return _values.Select(_comuunityToolkitStringPoolImpl.Execute).Count();
+        }
+
+
+        [Benchmark()]
         public int ExpressionTrees()
         {
             return _values.Select(_expressionTreeImpl.Execute).Count();
         }
+
     }
 
 

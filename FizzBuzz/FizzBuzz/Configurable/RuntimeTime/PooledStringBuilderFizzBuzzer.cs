@@ -20,8 +20,9 @@ namespace FizzBuzz.Configurable
 
             try
             {
-                foreach (var option in _options)
+                for (int i = 0; i < _options.Length; i++)
                 {
+                    var option = _options[i];
                     var modulo = value % option.Divider;
                     if (modulo == 0)
                     {

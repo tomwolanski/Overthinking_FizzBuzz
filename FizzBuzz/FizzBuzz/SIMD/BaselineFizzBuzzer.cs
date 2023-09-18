@@ -2,11 +2,11 @@
 {
     public sealed class BaselineFizzBuzzer
     {
-        public FizzBuzzResultEnum[] Execute(int n)
+        public FizzBuzzResultEnum[] Execute(int count)
         {
-            var output = new FizzBuzzResultEnum[n];
+            var output = new FizzBuzzResultEnum[count];
 
-            for (int i=0; i< n; i++)
+            for (int i=0; i< count; i++)
             {
                 output[i] = (i % 3, i % 5) switch
                 {

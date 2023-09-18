@@ -17,12 +17,15 @@
         public string Execute(int value)
         {
             Span<char> buffer = stackalloc char[_capacity];
+
+            // length of added strings combined together
             int length = 0;
 
             for (int i = 0; i < _options.Length; i++)
             {
                 var option = _options[i];
 
+                // slice is a window on top of buffer, it is moved after adding ech new word
                 var slice = buffer[length..];
 
                 var modulo = value % option.Divider;

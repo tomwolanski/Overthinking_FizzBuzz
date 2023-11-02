@@ -1,10 +1,14 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 
 namespace FizzBuzz.Configurable
 {
     [MemoryDiagnoser]
     [BenchmarkCategory("configurable")]
     [HtmlExporter, RPlotExporter, MarkdownExporter]
+    [SimpleJob(RuntimeMoniker.Net60, baseline: true)]
+    [SimpleJob(RuntimeMoniker.Net70)]
+    [SimpleJob(RuntimeMoniker.Net80)]
     public class RuntimeConfigurables_BenchmarkCollection
     {
         [Params(100, 10_000, 10_000_000)]
@@ -73,16 +77,10 @@ namespace FizzBuzz.Configurable
             return _values.Select(_comuunityToolkitStringPoolImpl.Execute).Count();
         }
 
-
         [Benchmark()]
         public int ExpressionTrees()
         {
             return _values.Select(_expressionTreeImpl.Execute).Count();
         }
-
     }
-
-
-
-
 }

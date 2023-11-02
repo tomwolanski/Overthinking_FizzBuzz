@@ -1,11 +1,15 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 
 namespace FizzBuzz.Configurable
 {
     [MemoryDiagnoser]
     [BenchmarkCategory("compiletime")]
     [HtmlExporter, RPlotExporter, MarkdownExporter]
-    public class FinalConfigurables_BenchmarkCollection
+    [SimpleJob(RuntimeMoniker.Net60, baseline: true)]
+    [SimpleJob(RuntimeMoniker.Net70)]
+    [SimpleJob(RuntimeMoniker.Net80)]
+    public class CompileTimeConfigurables_BenchmarkCollection
     {
         [Params(100, 10_000, 10_000_000)]
         public int N { get; set; }

@@ -11,10 +11,12 @@ namespace FizzBuzz.SIMD
 
         private readonly Action<Index1D, ArrayView<FizzBuzzResultEnum>> _kernel;
 
-        public ILGPUFizzBuzzer()
+        public ILGPUFizzBuzzer(AcceleratorType type)
         {
             // Initialize ILGPU.
             _context = Context.CreateDefault();
+            var device = _context.Devices.Single(n => n.AcceleratorType == type);
+
             _accelerator = _context.GetPreferredDevice(preferCPU: false).CreateAccelerator(_context);
 
             // load / precompile the kernel
